@@ -20,11 +20,6 @@ env:
 
 
 jobs:
-  dump:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: crazy-max/ghaction-dump-context@v2
-
   release:
     runs-on: ubuntu-latest
     permissions:
