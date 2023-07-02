@@ -41,6 +41,7 @@ jobs:
           echo "image=$image" >> $GITHUB_OUTPUT
           echo "version=$(jq -cerM '.version' "$image/.metadata.json")" >> $GITHUB_OUTPUT
           echo "description=$(jq -cerM '.description' "$image/.metadata.json")" >> $GITHUB_OUTPUT
+          echo "platforms=$(jq -cerM '.platforms | join(",")' "$image/.metadata.json")" >> $GITHUB_OUTPUT
 
       - name: Docker meta
         id: docker_meta
@@ -72,8 +73,9 @@ jobs:
         with: &build_opt
           context: '{{defaultContext}}:${{ steps.metadata.outputs.image }}'
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ steps.docker_meta.outputs.tags }}
+          labels: ${{ steps.docker_meta.outputs.labels }}
+          platforms: ${{ steps.metadata.outputs.platforms }}
           build-args: |
             VERSION=${{ steps.metadata.outputs.version }}
 
