@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1.5
+
 FROM --platform=$BUILDPLATFORM tonistiigi/xx AS xx
 FROM --platform=$BUILDPLATFORM alpine as builder
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
@@ -14,7 +16,7 @@ RUN wget -qO - "https://ftp.gnu.org/gnu/tar/tar-${VERSION}.tar.xz" | tar -Jxf - 
     && xx-apk add gcc musl-dev \
     && xx-clang --wrap \
     && FORCE_UNSAFE_CONFIGURE=1 CC='ccache clang' CFLAGS="-static -Wno-incompatible-function-pointer-types" \
-      ./configure --target=$(xx-clang --print-target-triple) \
+      ./configure --host=$(xx-clang --print-target-triple) \
     && make -j$(nproc) \
     && xx-verify --static src/tar \
     && upx --ultra-brute src/tar
