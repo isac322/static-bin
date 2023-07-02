@@ -25,6 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: collect-images
     strategy:
+      fail-fast: false
       matrix:
         image: ${{ fromJSON(needs.collect-images.outputs.matrix) }}
     steps:
@@ -54,3 +55,7 @@ jobs:
           platforms: ${{ steps.metadata.outputs.platforms }}
           build-args: |
             VERSION=${{ steps.metadata.outputs.version }}
+
+  build-result:
+    needs: build
+    runs-on: ubuntu-latest
