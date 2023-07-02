@@ -36,7 +36,7 @@ jobs:
         # language=Bash
         run: |
           echo "version=$(jq -cerM '.version' .metadata.json)" >> $GITHUB_OUTPUT
-          echo "platforms=$(jq -cerM '.platforms | join(",")' metadata.json)" >> $GITHUB_OUTPUT
+          echo "platforms=$(jq -cerM '.platforms | join(",")' .metadata.json)" >> $GITHUB_OUTPUT
 
       - name: Set up Docker Buildx
         id: buildx
