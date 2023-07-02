@@ -22,6 +22,8 @@ env:
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     if: github.event_name == 'workflow_dispatch' || github.event_name == 'create' && github.event.ref_type == 'tag'
     steps:
       - uses: actions/checkout@v3
@@ -71,7 +73,7 @@ jobs:
 
       - name: Build and push
         uses: docker/build-push-action@v4
-        with: &build_opt
+        with:
           context: '{{defaultContext}}:${{ steps.metadata.outputs.image }}'
           push: true
           tags: ${{ steps.docker_meta.outputs.tags }}
@@ -83,8 +85,10 @@ jobs:
       - name: Export binaries to local
         uses: docker/build-push-action@v4
         with:
-          <<: *build_opt
-          push: false
+          context: '{{defaultContext}}:${{ steps.metadata.outputs.image }}'
+          platforms: ${{ steps.metadata.outputs.platforms }}
+          build-args: |
+            VERSION=${{ steps.metadata.outputs.version }}
           outputs: type=local,dest=bin
           target: output
 
