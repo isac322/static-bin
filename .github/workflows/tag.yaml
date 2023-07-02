@@ -28,7 +28,7 @@ jobs:
 
   tag:
     runs-on: ubuntu-latest
-    if: needs.collect-images.outputs.matrix != ""
+    if: needs.collect-images.outputs.matrix != ''
     needs: collect-bumped
     strategy:
       matrix:
