@@ -39,8 +39,8 @@ jobs:
             echo 'use_latest=true' >> $GITHUB_OUTPUT
           fi
           echo "image=$image" >> $GITHUB_OUTPUT
-          echo "version=$(jq -cerM '.version' .metadata.json)" >> $GITHUB_OUTPUT
-          echo "description=$(jq -cerM '.description' .metadata.json)" >> $GITHUB_OUTPUT
+          echo "version=$(jq -cerM '.version' "$image/.metadata.json")" >> $GITHUB_OUTPUT
+          echo "description=$(jq -cerM '.description' "$image/.metadata.json")" >> $GITHUB_OUTPUT
 
       - name: Docker meta
         id: docker_meta
