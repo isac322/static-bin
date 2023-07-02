@@ -49,7 +49,7 @@ jobs:
         id: docker_meta
         uses: docker/metadata-action@v4
         with:
-          flavor: latest=${{ steps.metadata.use_latest }}
+          flavor: latest=${{ steps.metadata.outputs.use_latest }}
           images: ${{ env.REGISTRY }}/${{ env.OWNER }}/${{ steps.metadata.outputs.image }}
           tags: |
             type=raw,value=${{ steps.metadata.outputs.version }}
