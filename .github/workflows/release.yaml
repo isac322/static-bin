@@ -55,9 +55,10 @@ jobs:
             org.opencontainers.image.title=${{ steps.metadata.outputs.image }}
             org.opencontainers.image.url='${{ github.event.repository.html_url }}/tree/HEAD/${{ steps.metadata.outputs.image }}'
             org.opencontainers.image.source='${{ github.event.repository.html_url }}/tree/HEAD/${{ steps.metadata.outputs.image }}'
-#            org.opencontainers.image.documentation=URL
             org.opencontainers.image.description='${{ steps.metadata.outputs.description }}'
             org.opencontainers.image.base.name=scratch
+
+#            org.opencontainers.image.documentation=URL
 
       - name: Set up Docker Buildx
         id: buildx
