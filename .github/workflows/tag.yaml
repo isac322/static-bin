@@ -29,8 +29,8 @@ jobs:
         with:
           # language=JavaScript
           script: |
-            import { readFile } from 'node:fs/promises'
-            import path from 'node:path'
+            import { readFile } from 'fs/promises'
+            import path from 'path'
             const images = JSON.parse("${{ steps.changed-files.outputs.all_changed_files }}")
             console.log(`Will tag ${images}`)
             
