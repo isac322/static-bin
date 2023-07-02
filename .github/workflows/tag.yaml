@@ -29,13 +29,13 @@ jobs:
         with:
           # language=JavaScript
           script: |
-            import { readFile } from 'fs/promises'
-            import path from 'path'
+            const fs = require('fs/promises')
+            const path = require('path')
             const images = JSON.parse("${{ steps.changed-files.outputs.all_changed_files }}")
             console.log(`Will tag ${images}`)
             
             await Promise.all(images.map(image => async () => {
-                const version = await readFile(path.join(image, '.version'))
+                const version = await fs.readFile(path.join(image, '.version'))
                 await github.rest.git.createRef({
                     owner: context.repo.owner,
                     repo: context.repo.repo,
