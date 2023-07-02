@@ -23,6 +23,7 @@ jobs:
   release:
     runs-on: ubuntu-latest
     permissions:
+      contents: write
       packages: write
     if: github.event_name == 'workflow_dispatch' || github.event_name == 'create' && github.event.ref_type == 'tag'
     steps:
