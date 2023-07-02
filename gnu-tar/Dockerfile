@@ -20,7 +20,7 @@ RUN wget -qO - "https://ftp.gnu.org/gnu/tar/tar-${VERSION}.tar.xz" | tar -Jxf - 
       ./configure --host=$(xx-clang --print-target-triple) \
     && make -j$(nproc) \
     && xx-verify --static src/tar \
-    && if [ "${TARGETARCH}" != 's390x' ]; then  \
+    && if [ "${TARGETARCH}" != 's390x' ] && [ "${TARGETARCH}" != 'riscv64' ]; then  \
         upx --ultra-brute src/tar; \
        fi
 
