@@ -7,10 +7,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  collect-bumped:
+  tag:
     runs-on: ubuntu-latest
-    outputs:
-      matrix: ${{ steps.changed-files.outputs.all_changed_files }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -25,29 +23,23 @@ jobs:
           dir_names_exclude_current_dir: true
           dir_names_max_depth: 1
           json: true
-
-  tag:
-    runs-on: ubuntu-latest
-    if: needs.collect-images.outputs.matrix != ''
-    needs: collect-bumped
-    strategy:
-      matrix:
-        image: ${{ fromJSON(needs.collect-images.outputs.matrix) }}
-    steps:
-      - uses: actions/checkout@v3
-      - name: Read version
-        id: version
-        working-directory: "${{ matrix.image }}"
-        # language=Bash
-        run: echo "version=$(cat .version)" >> $GITHUB_OUTPUT
       - name: Create tag
-        uses: actions/github-script@v5
+        if: steps.changed-files.outputs.any_changed == 'true'
+        uses: actions/github-script@v6
         with:
-          # langauge=JavaScript
+          # language=JavaScript
           script: |
-            github.rest.git.createRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: 'refs/tags/${{ matrix.image }}@${{ steps.version.outputs.version }}',
-              sha: context.sha
-            })
+            import { readFile } from 'node:fs/promises'
+            import path from 'node:path'
+            const images = JSON.parse("${{ steps.changed-files.outputs.all_changed_files }}")
+            console.log(`Will tag ${images}`)
+            
+            await Promise.all(images.map(image => async () => {
+                const version = await readFile(path.join(image, '.version'))
+                await github.rest.git.createRef({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    ref: `refs/tags/${image}@${version}`,
+                    sha: context.sha
+                })
+            }))
