@@ -1,0 +1,8 @@
+{
+  "version": "1.32",
+  "description": "GNU Tar provides the ability to create tar archives, as well as various other kinds of manipulation.",
+  "platforms": [
+    "linux/amd64",
+    "linux/arm64/v8"
+  ]
+}
