@@ -31,10 +31,10 @@ jobs:
           script: |
             const fs = require('fs/promises')
             const path = require('path')
-            const images = JSON.parse("${{ steps.changed-files.outputs.all_changed_files }}")
+            const images = ${{ steps.changed-files.outputs.all_changed_files }}
             console.log(`Will tag ${images}`)
             
-            await Promise.all(images.map(image => async () => {
+            await Promise.all(images.map(async image => {
                 const metadata = await fs.readFile(path.join(image, '.metadata.json'), {encoding: 'utf-8'})
                 const version = JSON.parse(metadata).version
                 console.log(`tag ${image}@${version}`)
