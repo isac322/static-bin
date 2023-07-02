@@ -57,5 +57,9 @@ jobs:
             VERSION=${{ steps.metadata.outputs.version }}
 
   build-result:
+    if: always()
     needs: build
     runs-on: ubuntu-latest
+    steps:
+      - if: needs.build.result != 'success'
+        run: exit 1
