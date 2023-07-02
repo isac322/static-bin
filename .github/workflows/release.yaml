@@ -5,10 +5,10 @@ on:
 
   workflow_dispatch:
     inputs:
-      tag:
+      image:
         type: string
         required: true
-        description: Specific tag (e.g. `gnu-tar@1.31`)
+        description: Directory name to release
       latest:
         type: boolean
         required: false
@@ -27,28 +27,36 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Read tag
-        id: tag
+        id: metadata
         # language=Bash
         run: |
-          tag='${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.event.ref }}'
-          echo "image=${tag%%@*}" >> $GITHUB_OUTPUT
-          echo "version=${tag##*@}" >> $GITHUB_OUTPUT
           if [ '${{ github.event_name }}' == 'workflow_dispatch' ]; then
+            image='${{ inputs.image }}'
             echo 'use_latest=${{ inputs.latest }}' >> $GITHUB_OUTPUT
           else
+            tag='${{ github.event.ref }}'
+            image="${tag%%@*}"
             echo 'use_latest=true' >> $GITHUB_OUTPUT
           fi
+          echo "image=$image" >> $GITHUB_OUTPUT
+          echo "version=$(jq -cerM '.version' .metadata.json)" >> $GITHUB_OUTPUT
+          echo "description=$(jq -cerM '.description' .metadata.json)" >> $GITHUB_OUTPUT
 
       - name: Docker meta
         id: docker_meta
         uses: docker/metadata-action@v4
         with:
-          flavor: latest=${{ steps.tag.use_latest }}
-          images: ${{ env.REGISTRY }}/${{ env.OWNER }}/${{ steps.tag.outputs.image }}
+          flavor: latest=${{ steps.metadata.use_latest }}
+          images: ${{ env.REGISTRY }}/${{ env.OWNER }}/${{ steps.metadata.outputs.image }}
           tags: |
-            type=raw,value=${{ steps.tag.outputs.version }}
+            type=raw,value=${{ steps.metadata.outputs.version }}
           labels: |
-            org.opencontainers.image.title=${{ steps.tag.outputs.image }}
+            org.opencontainers.image.title=${{ steps.metadata.outputs.image }}
+            org.opencontainers.image.url='${{ github.event.repository.html_url }}/tree/HEAD/${{ steps.metadata.outputs.image }}'
+            org.opencontainers.image.source='${{ github.event.repository.html_url }}/tree/HEAD/${{ steps.metadata.outputs.image }}'
+#            org.opencontainers.image.documentation=URL
+            org.opencontainers.image.description='${{ steps.metadata.outputs.description }}'
+            org.opencontainers.image.base.name=scratch
 
       - name: Set up Docker Buildx
         id: buildx
@@ -62,25 +70,25 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v4
         with: &build_opt
-          context: '{{defaultContext}}:${{ steps.tag.outputs.image }}'
+          context: '{{defaultContext}}:${{ steps.metadata.outputs.image }}'
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            VERSION=${{ steps.tag.outputs.version }}
+            VERSION=${{ steps.metadata.outputs.version }}
 
       - name: Export binaries to local
         uses: docker/build-push-action@v4
         with:
           <<: *build_opt
           push: false
-          outputs: type=local,dest=.
+          outputs: type=local,dest=bin
           target: output
 
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: '${{ steps.tag.outputs.image }}@${{ steps.tag.outputs.version }}'
+          tag_name: '${{ steps.metadata.outputs.image }}@${{ steps.metadata.outputs.version }}'
           files: |
             bin/*
           generate_release_notes: true
