@@ -16,8 +16,8 @@ jobs:
       - id: collect
         # language=Bash
         run: |
-          directories=$("find . -type d -exec test -e '{}'/.metadata.json -a -e '{}'/Dockerfile \; -execdir basename '{}' \;
-            | jq -R '[.]'
+          directories=$("find . -type d -exec test -e '{}'/.metadata.json -a -e '{}'/Dockerfile \; -execdir basename '{}' \; \
+            | jq -R '[.]' \
             | jq -scrM 'add')"
           echo "directories=$directories" >> $GITHUB_OUTPUT
 
