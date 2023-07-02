@@ -1,0 +1,110 @@
+name: Release
+
+on:
+  create:
+
+  workflow_dispatch:
+
+jobs:
+  dump:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: crazy-max/ghaction-dump-context@v2
+
+#  collect-images:
+#    runs-on: ubuntu-latest
+#    outputs:
+#      matrix: ${{ steps.collect.outputs.directories }}
+#    steps:
+#      - uses: actions/checkout@v3
+#        with:
+#          fetch-depth: 2
+#      - name: Get changed files
+#        id: changed-files
+#        uses: tj-actions/changed-files@v37
+#        with:
+#          files: |
+#            **/.version
+#            .github/workflows/release.yaml
+#      - id: collect
+#        # language=Bash
+#        run: |
+#          directories=$("find . -type d -exec test -e '{}'/.version -a -e '{}'/Dockerfile \; -execdir basename '{}' \;
+#            | jq -R '[.]'
+#            | jq -scrM 'add')"
+#          echo "directories=$directories" >> $GITHUB_OUTPUT
+#
+#  release:
+#    runs-on: ubuntu-latest
+#    needs: collect-images
+#    strategy:
+#      matrix:
+#        image: ${{ fromJSON(needs.collect-images.outputs.matrix) }}
+#    steps:
+#      - uses: actions/checkout@v3
+#      - name: Get changed files
+#        id: changed-files
+#        uses: tj-actions/changed-files@v37
+#        with:
+#          files: |
+#            ${{ matrix.image }}/**
+#            .github/workflows/release.yaml
+#
+#
+#  wait-for-port:
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - uses: actions/checkout@v3
+#
+#      - name: Get changed files
+#        id: changed-files
+#        uses: tj-actions/changed-files@v35
+#        with:
+#          files: |
+#            wait-for-port/**
+#            .github/workflows/release.yaml
+#
+#      - name: Get version
+#        id: version
+#        if: steps.changed-files.outputs.any_changed == 'true'
+#        working-directory: wait-for-port
+#        run: |
+#          GH_TAG="$(go list -f '{{ .Version }}' -m 'github.com/bitnami/wait-for-port')"
+#          echo "version=${GH_TAG}" >> $GITHUB_OUTPUT
+#
+#      - uses: marvinpinto/action-automatic-releases@v1.2.1
+#        if: steps.changed-files.outputs.any_changed == 'true'
+#        with:
+#          repo_token: "${{ secrets.GHA_PAT }}"
+#          prerelease: false
+#          automatic_release_tag: wait-for-port@${{ steps.version.outputs.version }}
+#
+#  redis:
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - uses: actions/checkout@v3
+#
+#      - name: Get changed files
+#        id: changed-files
+#        uses: tj-actions/changed-files@v35
+#        with:
+#          files: |
+#            redis/**
+#            .github/workflows/release.yaml
+#
+#      - name: Get version
+#        if: steps.changed-files.outputs.any_changed == 'true'
+#        id: version
+#        working-directory: redis
+#        run: |
+#          DOCKER_TAG="$(grep --color=never -oP 'bitnami/redis:\K\S+' Dockerfile)"
+#          echo "version=${DOCKER_TAG}" >> $GITHUB_OUTPUT
+#
+#      - uses: marvinpinto/action-automatic-releases@v1.2.1
+#        if: steps.changed-files.outputs.any_changed == 'true'
+#        with:
+#          repo_token: "${{ secrets.GHA_PAT }}"
+#          prerelease: false
+#          automatic_release_tag: redis@${{ steps.version.outputs.version }}
