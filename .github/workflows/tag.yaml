@@ -36,6 +36,7 @@ jobs:
             
             await Promise.all(images.map(image => async () => {
                 const version = await fs.readFile(path.join(image, '.version'))
+                console.log(`tag ${image}@${version}`)
                 await github.rest.git.createRef({
                     owner: context.repo.owner,
                     repo: context.repo.repo,
