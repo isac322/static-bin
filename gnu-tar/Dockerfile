@@ -7,6 +7,7 @@ SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 COPY --from=xx / /
 # export TARGETPLATFORM (or other TARGET*)
 ARG TARGETPLATFORM
+ARG TARGETARCH
 
 ARG VERSION
 WORKDIR /opt/tar
@@ -19,7 +20,9 @@ RUN wget -qO - "https://ftp.gnu.org/gnu/tar/tar-${VERSION}.tar.xz" | tar -Jxf - 
       ./configure --host=$(xx-clang --print-target-triple) \
     && make -j$(nproc) \
     && xx-verify --static src/tar \
-    && upx --ultra-brute src/tar
+    && if [ "${TARGETARCH}" != 's390x' ]; then  \
+        upx --ultra-brute src/tar; \
+       fi
 
 FROM scratch as output
 ARG TARGETARCH
