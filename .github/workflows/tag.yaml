@@ -18,7 +18,7 @@ jobs:
         uses: tj-actions/changed-files@v37
         with:
           files: |
-            **/.version
+            **/.metadata.json
           dir_names: true
           dir_names_exclude_current_dir: true
           dir_names_max_depth: 1
@@ -35,7 +35,8 @@ jobs:
             console.log(`Will tag ${images}`)
             
             await Promise.all(images.map(image => async () => {
-                const version = await fs.readFile(path.join(image, '.version'))
+                const metadata = await fs.readFile(path.join(image, '.metadata.json'), {encoding: 'utf-8'})
+                const version = JSON.parse(metadata).version
                 console.log(`tag ${image}@${version}`)
                 await github.rest.git.createRef({
                     owner: context.repo.owner,
