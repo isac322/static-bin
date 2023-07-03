@@ -58,7 +58,7 @@ jobs:
                 const version = JSON.parse(metadata).version
                 const tag = `${image}@${version}`;
             
-                if ('${{ inputs.recreate }}' === 'true') {
+                if ('${{ inputs.recreate }}' === 'true' || context.eventName === 'create') {
                     core.debug(`searching existing release with tag ${tag}...`)
                     try {
                         const res = await github.rest.repos.getReleaseByTag({
