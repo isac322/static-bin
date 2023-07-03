@@ -39,10 +39,10 @@ jobs:
       - name: Create tag
         if: github.event_name == 'workflow_dispatch' || steps.changed-files.outputs.any_changed == 'true'
         uses: actions/github-script@v6
+        env:
+          TAG: "${{ inputs.image }}"
         with:
           github-token: ${{ secrets.GHA_PAT }}
-          env:
-            TAG: "${{ inputs.image }}"
           # language=JavaScript
           script: |
             const fs = require('fs/promises')
