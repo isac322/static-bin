@@ -58,10 +58,12 @@ jobs:
             VERSION=${{ steps.metadata.outputs.version }}
 
   build-result:
-    needs: build
     if: always()
+    needs:
+      - collect-images
+      - build
     runs-on: ubuntu-latest
     steps:
-      - if: needs.build.result != 'success' && needs.build.result != 'skipped'
+      - if: needs.collect-images.outputs.image_changed != 'true' && needs.build.result != 'success' && needs.build.result != 'skipped'
         # language=Bash
         run: echo '${{ needs.build.result }}' && exit 1
