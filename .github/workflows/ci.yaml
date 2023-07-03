@@ -34,7 +34,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        image: ${{ needs.collect-images.outputs.matrix }}
+        image: ${{ fromJSON(needs.collect-images.outputs.matrix) }}
     steps:
       - uses: actions/checkout@v3
 
