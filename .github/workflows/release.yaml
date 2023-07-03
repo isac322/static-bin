@@ -105,5 +105,5 @@ jobs:
         with:
           tag_name: '${{ steps.metadata.outputs.image }}@${{ steps.metadata.outputs.version }}'
           files: |
-            bin/*
+            bin/**/*
           generate_release_notes: true
