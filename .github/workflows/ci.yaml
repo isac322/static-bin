@@ -8,7 +8,7 @@ jobs:
   collect-images:
     runs-on: ubuntu-latest
     outputs:
-      matrix: '${{ toJSON(steps.changed-files.outputs.all_changed_files) }}'
+      matrix: '${{ steps.changed-files.outputs.all_changed_files }}'
       image_changed: '${{ steps.changed-files.outputs.any_changed }}'
     steps:
       - uses: actions/checkout@v3
@@ -34,7 +34,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        image: ${{ fromJSON(needs.collect-images.outputs.matrix) }}
+        image: ${{ needs.collect-images.outputs.matrix }}
     steps:
       - uses: actions/checkout@v3
 
