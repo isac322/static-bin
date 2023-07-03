@@ -45,7 +45,7 @@ jobs:
           script: |
             const fs = require('fs/promises')
             const path = require('path')
-            const images = context.event_name === 'workflow_dispatch' ? [core.getInput('image')] : ${{ steps.changed-files.outputs.all_changed_files || [] }}
+            const images = context.event_name === 'workflow_dispatch' ? [core.getInput('image')] : ${{ steps.changed-files.outputs.all_changed_files || '[]' }}
             if (images.length === 0) {
                 core.debug('no image changed')
                 return
