@@ -60,7 +60,9 @@ jobs:
 
   build-result:
     if: always()
-    needs: build
+    needs:
+      - collect-images
+      - build
     runs-on: ubuntu-latest
     steps:
       - if: needs.collect-images.outputs.image_changed != 'true' && needs.build.result != 'success' && needs.build.result != 'skipped'
