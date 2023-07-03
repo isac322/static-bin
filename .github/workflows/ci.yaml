@@ -1,37 +1,35 @@
 name: CI
 
 on:
-  push:
-    branches-ignore:
-      - master
+  pull_request:
   workflow_dispatch:
 
 jobs:
   collect-images:
     runs-on: ubuntu-latest
     outputs:
-      matrix: ${{ steps.changed-files.outputs.all_changed_files }}
-      image_changed: ${{ steps.changed-files.outputs.any_changed }}
+      matrix: '${{ steps.changed-files.outputs.all_changed_files }}'
+      image_changed: '${{ steps.changed-files.outputs.any_changed }}'
     steps:
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 2
+          fetch-depth: 0
       - name: Get changed files
         id: changed-files
         uses: tj-actions/changed-files@v37
         with:
           files: |
-            */.metadata.json
-            */Dockerfile
+            **/.metadata.json
+            **/Dockerfile
           dir_names: true
           dir_names_exclude_current_dir: true
           dir_names_max_depth: 1
           json: true
+          escape_json: false
 
   build:
     runs-on: ubuntu-latest
     needs: collect-images
-    if: needs.collect-images.outputs.image_changed == 'true'
     strategy:
       fail-fast: false
       matrix:
@@ -66,4 +64,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - if: needs.collect-images.outputs.image_changed != 'true' && needs.build.result != 'success' && needs.build.result != 'skipped'
-        run: exit 1
+        # language=Bash
+        run: echo '${{ needs.build.result }}' && exit 1
