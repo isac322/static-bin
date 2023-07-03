@@ -49,8 +49,10 @@ jobs:
             const path = require('path')
             core.info('${{ env.TAG }}')
             core.info('${{ inputs.image }}')
+            core.info('${{ inputs.recreate }}')
+            core.info(core.getBooleanInput('recreate'))
             core.info(core.getInput('image'))
-            const images = context.eventName === 'workflow_dispatch' ? [core.getInput('image')] : ${{ steps.changed-files.outputs.all_changed_files || '[]' }}
+            const images = context.eventName === 'workflow_dispatch' ? ['${{ inputs.image }}'] : ${{ steps.changed-files.outputs.all_changed_files || '[]' }}
             if (images.length === 0) {
                 core.debug('no image changed')
                 return
