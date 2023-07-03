@@ -63,4 +63,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - if: needs.build.result != 'success' && needs.build.result != 'skipped'
-        run: exit 1
+        run: echo '${{ needs.build.result }}' && exit 1
