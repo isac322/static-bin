@@ -30,8 +30,17 @@ jobs:
         image: ${{ fromJSON(needs.collect-images.outputs.matrix) }}
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v37
+        with:
+          files: ${{ matrix.image }}/**
 
       - name: Read metadata
+        if: steps.changed-files.outputs.any_changed == 'true'
         id: metadata
         working-directory: "${{ matrix.image }}"
         # language=Bash
@@ -40,10 +49,11 @@ jobs:
           echo "platforms=$(jq -cerM '.platforms | join(",")' .metadata.json)" >> $GITHUB_OUTPUT
 
       - name: Set up Docker Buildx
-        id: buildx
+        if: steps.changed-files.outputs.any_changed == 'true'
         uses: docker/setup-buildx-action@v2
 
       - name: Build and push
+        if: steps.changed-files.outputs.any_changed == 'true'
         uses: docker/build-push-action@v4
         with:
           context: '{{defaultContext}}:${{ matrix.image }}'
