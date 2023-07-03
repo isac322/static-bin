@@ -11,6 +11,11 @@ on:
         type: string
         required: true
         description: Directory name to tag
+      recreate:
+        type: boolean
+        required: false
+        description: Recreate tag & release if exists
+        default: false
 
 jobs:
   tag:
@@ -30,28 +35,58 @@ jobs:
           dir_names_exclude_current_dir: true
           dir_names_max_depth: 1
           json: true
+          escape_json: false
       - name: Create tag
         if: github.event_name == 'workflow_dispatch' || steps.changed-files.outputs.any_changed == 'true'
         uses: actions/github-script@v6
-        env:
-          IMAGES: "${{ github.event_name == 'workflow_dispatch' && format('[\"{0}\"]', inputs.image) || steps.changed-files.outputs.all_changed_files }}"
         with:
           github-token: ${{ secrets.GHA_PAT }}
           # language=JavaScript
           script: |
             const fs = require('fs/promises')
             const path = require('path')
-            const images = JSON.parse('${{ env.IMAGES }}')
-            console.log(`Will tag ${images}`)
+            const images = context.event_name === 'workflow_dispatch' ? [core.getInput('image')] : ${{ steps.changed-files.outputs.all_changed_files }
+            }
+            if (images.length) {
+                core.debug('no image changed')
+                return
+            }
             
+            core.info(`Will tag ${images}`)
             await Promise.all(images.map(async image => {
                 const metadata = await fs.readFile(path.join(image, '.metadata.json'), {encoding: 'utf-8'})
                 const version = JSON.parse(metadata).version
-                console.log(`tag ${image}@${version}`)
+                const tag = `${image}@${version}`;
+            
+                if (core.getBooleanInput('recreate')) {
+                    core.debug(`searching existing release with tag ${tag}...`)
+                    const res = await github.rest.repos.getReleaseByTag({
+                        owner: context.repo.owner,
+                        repo: context.repo.repo,
+                        tag
+                    })
+                    if (res.status === 200) {
+                        core.info(`found existing release ID ${res.data.id}`)
+                        await github.rest.repos.deleteRelease({
+                            owner: context.repo.owner,
+                            repo: context.repo.repo,
+                            release_id: res.data.id
+                        })
+                        await github.rest.git.deleteRef({
+                            owner: context.repo.owner,
+                            repo: context.repo.repo,
+                            ref: `refs/tags/${tag}`
+                        });
+                    } else {
+                        core.debug(`not found existing release with tag ${image}@${version}`)
+                    }
+                }
+            
+                core.info(`tag ${tag}`)
                 await github.rest.git.createRef({
                     owner: context.repo.owner,
                     repo: context.repo.repo,
-                    ref: `refs/tags/${image}@${version}`,
+                    ref: `refs/tags/${tag}`,
                     sha: context.sha
                 })
             }))
