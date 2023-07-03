@@ -21,8 +21,8 @@ jobs:
         uses: tj-actions/changed-files@v37
         with:
           files: |
-            */.metadata.json
-            */Dockerfile
+            **/.metadata.json
+            **/Dockerfile
           dir_names: true
           dir_names_exclude_current_dir: true
           dir_names_max_depth: 1
