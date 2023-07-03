@@ -45,7 +45,6 @@ jobs:
           script: |
             const fs = require('fs/promises')
             const path = require('path')
-            core.info(context.eventName)
             const images = context.eventName === 'workflow_dispatch' ? ['${{ inputs.image }}'] : ${{ steps.changed-files.outputs.all_changed_files || '[]' }}
             if (images.length === 0) {
                 core.debug('no image changed')
@@ -61,12 +60,14 @@ jobs:
             
                 if ('${{ inputs.recreate }}' === 'true') {
                     core.debug(`searching existing release with tag ${tag}...`)
-                    const res = await github.rest.repos.getReleaseByTag({
-                        owner: context.repo.owner,
-                        repo: context.repo.repo,
-                        tag
-                    })
-                    if (res.status === 200) {
+                    try {
+                        const res = await github.rest.repos.getReleaseByTag({
+                            owner: context.repo.owner,
+                            repo: context.repo.repo,
+                            tag
+                        })
+                        core.debug(JSON.stringify(res))            
+            
                         core.info(`found existing release ID ${res.data.id}`)
                         await github.rest.repos.deleteRelease({
                             owner: context.repo.owner,
@@ -78,15 +79,17 @@ jobs:
                             repo: context.repo.repo,
                             ref: `refs/tags/${tag}`
                         });
-                    } else if (res.status === 404) {
-                        core.debug(`not found existing release with tag ${tag}`)
-                        await github.rest.git.deleteRef({
-                            owner: context.repo.owner,
-                            repo: context.repo.repo,
-                            ref: `refs/tags/${tag}`
-                        });
-                    } else {
-                        core.setFailed(JSON.stringify(res))
+                    } catch (e) {
+                        if (e.status === 404) {
+                            core.debug(`not found existing release with tag ${tag}`)
+                            await github.rest.git.deleteRef({
+                                owner: context.repo.owner,
+                                repo: context.repo.repo,
+                                ref: `refs/tags/${tag}`
+                            })
+                        } else {
+                            throw e
+                        }
                     }
                 }
             
