@@ -30,7 +30,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     needs: collect-images
-    if: needs.collect-images.outputs.image_changed == 'true'
+    if: ${{ needs.collect-images.outputs.image_changed == 'true' }}
     strategy:
       fail-fast: false
       matrix:
