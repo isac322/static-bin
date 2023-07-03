@@ -41,6 +41,8 @@ jobs:
         uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GHA_PAT }}
+          env:
+            TAG: "${{ inputs.image }}"
           # language=JavaScript
           script: |
             const fs = require('fs/promises')
