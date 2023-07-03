@@ -29,8 +29,7 @@ RUN wget -qO - "https://ftp.gnu.org/gnu/tar/tar-${VERSION}.tar.xz" | tar -Jxf - 
          upx --ultra-brute src/tar; \
        fi \
     && mkdir -p /release \
-    && echo "/release/$(xx-info march) /release/$(xx-info alpine-arch) /release/$(xx-info debian-arch) /release/$(xx-info rhel-arch)"  \
-       | xargs -n 1 cp -vfp src/tar
+    && echo "/release/$(xx-info march) /release/$(xx-info debian-arch)" | xargs -n 1 cp -vfp src/tar
 
 FROM scratch as output
 COPY --link --from=builder /release/ .
