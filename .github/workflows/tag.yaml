@@ -45,6 +45,7 @@ jobs:
           script: |
             const fs = require('fs/promises')
             const path = require('path')
+            core.info(core.getInput('image'))
             const images = context.eventName === 'workflow_dispatch' ? [core.getInput('image')] : ${{ steps.changed-files.outputs.all_changed_files || '[]' }}
             if (images.length === 0) {
                 core.debug('no image changed')
@@ -53,6 +54,7 @@ jobs:
             
             core.info(`Will tag ${images}`)
             await Promise.all(images.map(async image => {
+                core.info(`tagging ${image}...`)
                 const metadata = await fs.readFile(path.join(image, '.metadata.json'), {encoding: 'utf-8'})
                 const version = JSON.parse(metadata).version
                 const tag = `${image}@${version}`;
@@ -76,8 +78,15 @@ jobs:
                             repo: context.repo.repo,
                             ref: `refs/tags/${tag}`
                         });
+                    } else if (res.status === 404) {
+                        core.debug(`not found existing release with tag ${tag}`)
+                        await github.rest.git.deleteRef({
+                            owner: context.repo.owner,
+                            repo: context.repo.repo,
+                            ref: `refs/tags/${tag}`
+                        });
                     } else {
-                        core.debug(`not found existing release with tag ${image}@${version}`)
+                        core.setFailed(JSON.stringify(res))
                     }
                 }
             
