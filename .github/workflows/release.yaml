@@ -100,7 +100,7 @@ jobs:
           outputs: type=local,dest=bin
           target: output
 
-      - run: ls -ahlR bin
+      - run: find bin -type f -name 'provenance.json' -delete
 
       - name: Release
         uses: softprops/action-gh-release@v1
