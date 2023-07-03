@@ -8,8 +8,8 @@ jobs:
   collect-images:
     runs-on: ubuntu-latest
     outputs:
-      matrix: ${{ steps.changed-files.outputs.all_changed_files }}
-      image_changed: ${{ steps.changed-files.outputs.any_changed }}
+      matrix: '${{ steps.changed-files.outputs.all_changed_files }}'
+      image_changed: '${{ steps.changed-files.outputs.any_changed }}'
     steps:
       - uses: actions/checkout@v3
         with:
@@ -25,6 +25,7 @@ jobs:
           dir_names_exclude_current_dir: true
           dir_names_max_depth: 1
           json: true
+      - run: echo '${{ steps.changed-files.outputs.all_changed_files }}' && echo '${{ steps.changed-files.outputs.any_changed }}'
 
   build:
     runs-on: ubuntu-latest
