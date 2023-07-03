@@ -110,3 +110,13 @@ jobs:
             bin/**/*
           generate_release_notes: true
           fail_on_unmatched_files: true
+
+      - name: Release latest
+        if: github.event_name != 'workflow_dispatch' || steps.metadata.outputs.use_latest == 'true'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: '${{ steps.metadata.outputs.image }}@latest'
+          files: |
+            bin/**/*
+          generate_release_notes: true
+          fail_on_unmatched_files: true
