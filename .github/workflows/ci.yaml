@@ -44,6 +44,13 @@ jobs:
         run: |
           echo "version=$(jq -cerM '.version' .metadata.json)" >> $GITHUB_OUTPUT
           echo "platforms=$(jq -cerM '.platforms | join(",")' .metadata.json)" >> $GITHUB_OUTPUT
+          echo "qemu=$(jq -crM '.qemu // false' .metadata.json)" >> $GITHUB_OUTPUT
+
+      - name: Set up QEMU
+        if: steps.metadata.outputs.qemu == 'true'
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: ${{ steps.metadata.outputs.platforms }}
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
