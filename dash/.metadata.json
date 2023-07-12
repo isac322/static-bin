@@ -9,5 +9,6 @@
     "linux/ppc64le",
     "linux/s390x",
     "linux/riscv64"
-  ]
+  ],
+  "qemu": true
 }
