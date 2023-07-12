@@ -13,7 +13,7 @@ ARG VERSION
 WORKDIR /opt/dash
 
 RUN wget -qO - "https://git.kernel.org/pub/scm/utils/dash/dash.git/snapshot/dash-${VERSION}.tar.gz" | tar -zxf - --strip-components=1 \
-    && apk add --update automake autoconf make gcc musl-dev upx \
+    && apk add --update automake autoconf make gcc musl-dev \
     && ./autogen.sh \
     && CFLAGS='-Os -ffunction-sections -fdata-sections' \
        LDFLAGS='-Wl,--gc-sections -s' \
@@ -21,6 +21,7 @@ RUN wget -qO - "https://git.kernel.org/pub/scm/utils/dash/dash.git/snapshot/dash
     && make -j$(nproc) \
     && strip -s -R .comment -R .gnu.version --strip-unneeded src/dash \
     && if [ "${TARGETARCH}" != 's390x' ] && [ "${TARGETARCH}" != 'riscv64' ]; then \
+         apk add upx; \
          upx --ultra-brute --lzma src/dash; \
        fi \
     && mkdir -p /release \
