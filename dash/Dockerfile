@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.5
 
 FROM tonistiigi/xx AS xx
-FROM alpine as builder
+FROM alpine:edge as builder
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 # copy xx scripts to your build stage
 COPY --from=xx / /
