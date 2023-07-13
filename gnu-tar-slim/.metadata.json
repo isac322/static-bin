@@ -13,8 +13,7 @@
   "imageName": "gnu-tar",
   "tagSuffix": "-slim",
   "tagFormats": [
-    "type=pep440,pattern={{raw}}",
-    "type=pep440,pattern={{major}}.{{minor}}",
+    "type=raw",
     "type=pep440,pattern={{major}}"
   ]
 }
