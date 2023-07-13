@@ -42,14 +42,19 @@ jobs:
         run: |
           if [ '${{ github.event_name }}' == 'workflow_dispatch' ]; then
             target='${{ inputs.target }}'
-            echo 'use_latest=${{ inputs.latest }}' >> $GITHUB_OUTPUT
+            use_latest='${{ inputs.latest }}'
           else
             tag='${{ github.event.ref }}'
             target="${tag%%@*}"
-            echo 'use_latest=true' >> $GITHUB_OUTPUT
+            use_latest=true
           fi
           tagSuffix="$(jq -crM '.tagSuffix // ""' "$target/.metadata.json")"
           version="$(jq -cerM '.version' "$target/.metadata.json")"
+          if [ -z "$tagSuffix" ]; then
+            echo "use_latest=$use_latest" >> $GITHUB_OUTPUT
+          else
+            echo 'use_latest=false' >> $GITHUB_OUTPUT
+          fi
           
           echo "target=$target" >> $GITHUB_OUTPUT
           echo "image=$(jq -cerM '.imageName' "$target/.metadata.json")" >> $GITHUB_OUTPUT
