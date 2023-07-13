@@ -131,7 +131,8 @@ jobs:
         if: github.event_name != 'workflow_dispatch' || steps.metadata.outputs.use_latest == 'true'
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: '${{ steps.metadata.outputs.target }}'
+          name: ${{ steps.metadata.outputs.target }}
+          tag_name: '${{ steps.metadata.outputs.target }}@${{ steps.metadata.outputs.version }}'
           files: |
             bin/**/*
           generate_release_notes: true
