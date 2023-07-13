@@ -9,5 +9,11 @@
     "linux/ppc64le",
     "linux/s390x",
     "linux/riscv64"
+  ],
+  "imageName": "gnu-tar",
+  "tagSuffix": "-slim",
+  "tagFormats": [
+    "type=semver,pattern={{version}}",
+    "type=semver,pattern={{major}}"
   ]
 }

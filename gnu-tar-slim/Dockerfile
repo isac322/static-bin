@@ -20,13 +20,13 @@ RUN wget -qO - "https://ftp.gnu.org/gnu/tar/tar-${VERSION}.tar.xz" | tar -Jxf - 
     && FORCE_UNSAFE_CONFIGURE=1 \
        CC=xx-clang \
        CFLAGS='-Os -ffunction-sections -fdata-sections -static -Wno-incompatible-function-pointer-types' \
-       LDFLAGS='-Wl,--gc-sections,-s' \
+       LDFLAGS='-Wl,--gc-sections -s -static' \
       ./configure --host=$(xx-clang --print-target-triple) \
     && make -j$(nproc) \
     && xx-verify --static src/tar \
     && $(xx-info)-strip -s -R .comment -R .gnu.version --strip-unneeded src/tar \
     && if [ "${TARGETARCH}" != 's390x' ] && [ "${TARGETARCH}" != 'riscv64' ]; then \
-         upx --ultra-brute src/tar; \
+         upx --ultra-brute --lzma src/tar; \
        fi \
     && mkdir -p /release \
     && echo "/release/$(xx-info march) /release/$(xx-info debian-arch)" | xargs -n 1 cp -vfp src/tar

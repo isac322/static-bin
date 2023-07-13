@@ -5,7 +5,7 @@ on:
 
   workflow_dispatch:
     inputs:
-      image:
+      target:
         type: string
         required: true
         description: Directory name to release
@@ -41,17 +41,26 @@ jobs:
         # language=Bash
         run: |
           if [ '${{ github.event_name }}' == 'workflow_dispatch' ]; then
-            image='${{ inputs.image }}'
+            target='${{ inputs.target }}'
             echo 'use_latest=${{ inputs.latest }}' >> $GITHUB_OUTPUT
           else
             tag='${{ github.event.ref }}'
-            image="${tag%%@*}"
+            target="${tag%%@*}"
             echo 'use_latest=true' >> $GITHUB_OUTPUT
           fi
-          echo "image=$image" >> $GITHUB_OUTPUT
-          echo "version=$(jq -cerM '.version' "$image/.metadata.json")" >> $GITHUB_OUTPUT
-          echo "description=$(jq -cerM '.description' "$image/.metadata.json")" >> $GITHUB_OUTPUT
-          echo "platforms=$(jq -cerM '.platforms | join(",")' "$image/.metadata.json")" >> $GITHUB_OUTPUT
+          tagSuffix="$(jq -crM '.tagSuffix // ""' "$target/.metadata.json")"
+          version="$(jq -cerM '.version' "$target/.metadata.json")"
+          
+          echo "target=$target" >> $GITHUB_OUTPUT
+          echo "image=$(jq -cerM '.imageName' "$target/.metadata.json")" >> $GITHUB_OUTPUT
+          echo "version=$version" >> $GITHUB_OUTPUT
+          echo "description=$(jq -cerM '.description' "$target/.metadata.json")" >> $GITHUB_OUTPUT
+          echo "platforms=$(jq -cerM '.platforms | join(",")' "$target/.metadata.json")" >> $GITHUB_OUTPUT
+          echo "TAG_FORMATS<<EOF" >> $GITHUB_ENV
+          for f in "$(jq -crM '.tagFormats[]' "$target/.metadata.json")"; do
+            echo "$f,suffix=$tagSuffix,value=$version" >> $GITHUB_ENV
+          done
+          echo "EOF" >> $GITHUB_ENV
 
       - name: Docker meta
         id: docker_meta
@@ -59,12 +68,11 @@ jobs:
         with:
           flavor: latest=${{ steps.metadata.outputs.use_latest }}
           images: ${{ env.REGISTRY }}/${{ env.OWNER }}/${{ steps.metadata.outputs.image }}
-          tags: |
-            type=raw,value=${{ steps.metadata.outputs.version }}
+          tags: ${{ env.TAG_FORMATS }}
           labels: |
             org.opencontainers.image.title=${{ steps.metadata.outputs.image }}
-            org.opencontainers.image.url='${{ github.event.repository.html_url }}/tree/HEAD/${{ steps.metadata.outputs.image }}'
-            org.opencontainers.image.source='${{ github.event.repository.html_url }}/tree/HEAD/${{ steps.metadata.outputs.image }}'
+            org.opencontainers.image.url='${{ github.event.repository.html_url }}/tree/HEAD/${{ steps.metadata.outputs.target }}'
+            org.opencontainers.image.source='${{ github.event.repository.html_url }}/tree/HEAD/${{ steps.metadata.outputs.target }}'
             org.opencontainers.image.description='${{ steps.metadata.outputs.description }}'
             org.opencontainers.image.base.name=scratch
 
@@ -76,7 +84,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v4
         with:
-          context: '{{defaultContext}}:${{ steps.metadata.outputs.image }}'
+          context: '{{defaultContext}}:${{ steps.metadata.outputs.target }}'
           push: true
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
@@ -87,7 +95,7 @@ jobs:
       - name: Export binaries to local
         uses: docker/build-push-action@v4
         with:
-          context: '{{defaultContext}}:${{ steps.metadata.outputs.image }}'
+          context: '{{defaultContext}}:${{ steps.metadata.outputs.target }}'
           platforms: ${{ steps.metadata.outputs.platforms }}
           build-args: |
             VERSION=${{ steps.metadata.outputs.version }}
@@ -99,7 +107,7 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: '${{ steps.metadata.outputs.image }}@${{ steps.metadata.outputs.version }}'
+          tag_name: '${{ steps.metadata.outputs.target }}@${{ steps.metadata.outputs.version }}'
           files: |
             bin/**/*
           generate_release_notes: true
@@ -109,7 +117,7 @@ jobs:
         if: github.event_name != 'workflow_dispatch' || steps.metadata.outputs.use_latest == 'true'
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: '${{ steps.metadata.outputs.image }}@latest'
+          tag_name: '${{ steps.metadata.outputs.target }}'
           files: |
             bin/**/*
           generate_release_notes: true
