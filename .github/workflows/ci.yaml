@@ -27,6 +27,26 @@ jobs:
           json: true
           escape_json: false
 
+  lint:
+    runs-on: ubuntu-latest
+    needs: collect-images
+    strategy:
+      fail-fast: false
+      matrix:
+        image: ${{ fromJSON(needs.collect-images.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Validate metadata
+        working-directory: "${{ matrix.image }}"
+        # language=Bash
+        run: |
+          test -f .metadata.json
+          jq -cerM 'if (.version | length) > 0 then .version else error("empty version") end' .metadata.json
+          jq -cerM 'if (.description | length) > 0 then .description else error("empty description") end' .metadata.json
+          jq -cerM 'if (.platforms | length) > 0 then .platforms else error("empty platforms") end' .metadata.json
+          jq -cerM 'if (.imageName | length) > 0 then .imageName else error("empty imageName") end' .metadata.json
+          jq -cerM 'if (.tagFormats | length) > 0 then .tagFormats else error("empty tagFormats") end' .metadata.json
+
   build:
     runs-on: ubuntu-latest
     needs: collect-images
@@ -68,6 +88,7 @@ jobs:
     needs:
       - collect-images
       - build
+      - lint
     runs-on: ubuntu-latest
     steps:
       - if: needs.collect-images.outputs.image_changed != 'true' && needs.build.result != 'success' && needs.build.result != 'skipped'
