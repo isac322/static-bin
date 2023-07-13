@@ -61,8 +61,9 @@ jobs:
           echo "version=$version" >> $GITHUB_OUTPUT
           echo "description=$(jq -cerM '.description' "$target/.metadata.json")" >> $GITHUB_OUTPUT
           echo "platforms=$(jq -cerM '.platforms | join(",")' "$target/.metadata.json")" >> $GITHUB_OUTPUT
+          readarray -t tag_formats < <(jq -crM '.tagFormats[]' "$target/.metadata.json")
           echo "TAG_FORMATS<<EOF" >> $GITHUB_ENV
-          for f in "$(jq -crM '.tagFormats[]' "$target/.metadata.json")"; do
+          for f in "${tag_formats[@]}"; do
             echo "$f,suffix=$tagSuffix,value=$version" >> $GITHUB_ENV
           done
           echo "EOF" >> $GITHUB_ENV
