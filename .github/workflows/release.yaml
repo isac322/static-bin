@@ -88,6 +88,7 @@ jobs:
             org.opencontainers.image.source='${{ github.event.repository.html_url }}/tree/HEAD/${{ steps.metadata.outputs.target }}'
             org.opencontainers.image.description='${{ steps.metadata.outputs.description }}'
             org.opencontainers.image.base.name=scratch
+            org.opencontainers.image.version='${{ steps.metadata.outputs.version }}'
 
 #            org.opencontainers.image.documentation=URL
 
