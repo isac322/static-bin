@@ -132,7 +132,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           name: ${{ steps.metadata.outputs.target }}
-          tag_name: '${{ steps.metadata.outputs.target }}@${{ steps.metadata.outputs.version }}'
+          tag_name: '${{ steps.metadata.outputs.target }}@latest'
           files: |
             bin/**/*
           generate_release_notes: true
