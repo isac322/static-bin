@@ -88,6 +88,7 @@ jobs:
     needs:
       - collect-images
       - build
+      - lint
     runs-on: ubuntu-latest
     steps:
       - if: needs.collect-images.outputs.image_changed != 'true' && needs.build.result != 'success' && needs.build.result != 'skipped'
