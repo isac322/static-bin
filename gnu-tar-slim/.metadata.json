@@ -11,7 +11,7 @@
     "linux/riscv64"
   ],
   "imageName": "gnu-tar",
-  "tagSuffix": "-slim",
+  "tagSuffix": "slim",
   "tagFormats": [
     "type=raw",
     "type=pep440,pattern={{major}}"

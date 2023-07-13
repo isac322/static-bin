@@ -64,8 +64,15 @@ jobs:
           readarray -t tag_formats < <(jq -crM '.tagFormats[]' "$target/.metadata.json")
           echo "TAG_FORMATS<<EOF" >> $GITHUB_ENV
           for f in "${tag_formats[@]}"; do
-            echo "$f,suffix=$tagSuffix,value=$version" >> $GITHUB_ENV
+            if [ -n "$tagSuffix" ]; then
+              echo "$f,suffix=-$tagSuffix,value=$version" >> $GITHUB_ENV
+            else
+              echo "$f,value=$version" >> $GITHUB_ENV
+            fi
           done
+          if [ -n "$tagSuffix" ]; then
+            echo "type=raw,value=$tagSuffix" >> $GITHUB_ENV
+          fi
           echo "EOF" >> $GITHUB_ENV
 
       - name: Docker meta
