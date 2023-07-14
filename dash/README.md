@@ -31,3 +31,13 @@ Note that if you are copying the dash to another stage in a multi stage build, y
         └── bin
             └── dash
 ```
+
+### Supported platforms
+
+- `linux/amd64`
+- `linux/arm64/v8`
+- `linux/arm/v7`
+- `linux/arm/v6`
+- `linux/ppc64le`
+- `linux/s390x`
+- `linux/riscv64`
