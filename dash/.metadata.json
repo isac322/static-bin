@@ -1,5 +1,5 @@
 {
-  "version": "0.5.12",
+  "version": "0.5.11.5",
   "description": "DASH is a POSIX-compliant implementation of /bin/sh that aims to be as small as possible.",
   "platforms": [
     "linux/amd64",
@@ -10,5 +10,12 @@
     "linux/s390x",
     "linux/riscv64"
   ],
-  "qemu": true
+  "qemu": true,
+  "imageName": "dash",
+  "tagFormats": [
+    "type=pep440,pattern={{version}}",
+    "type=pep440,pattern={{major}}",
+    "type=pep440,pattern={{major}}.{{minor}}",
+    "type=pep440,pattern={{major}}.{{minor}}.{{patch}}"
+  ]
 }
