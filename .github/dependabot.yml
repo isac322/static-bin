@@ -9,3 +9,15 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "daily"
+  - package-ecosystem: "docker"
+    directory: "/dash" # Location of package manifests
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "docker"
+    directory: "/gnu-tar" # Location of package manifests
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "docker"
+    directory: "/zstd-slim" # Location of package manifests
+    schedule:
+      interval: "daily"
