@@ -12,12 +12,12 @@ WORKDIR /opt/zstd
 
 RUN wget -qO- "https://github.com/facebook/zstd/releases/download/v${VERSION}/zstd-${VERSION}.tar.gz" \
       | tar -zxf - --strip-components=1 \
-    && apk add --update cmake make clang llvm lld upx \
+    && apk add --update make clang llvm lld upx \
     && if [ "${TARGETARCH}" = 'ppc64le' ]; then export XX_CC_PREFER_LINKER=ld; fi \
     && xx-apk add gcc musl-dev \
     && xx-clang --setup-target-triple \
     && CC="$(xx-info)-clang" \
-       CFLAGS='-Os -ffunction-sections -fdata-sections -DZSTD_LIB_DICTBUILDER=0 -DZSTD_LIB_DEPRECATED=0' \
+       CFLAGS='-Os -ffunction-sections -fdata-sections -DZSTD_LIB_DICTBUILDER=0 -DZSTD_LIB_DEPRECATED=0 -DZSTD_LIB_MINIFY=1 -DZSTD_LEGACY_SUPPORT=0' \
        LDFLAGS='-Wl,--gc-sections -s' \
        make -j "$(nproc)" V=1 -C lib install-static-mt \
     && CC="$(xx-info)-clang" \
