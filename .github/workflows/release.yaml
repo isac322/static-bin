@@ -27,6 +27,7 @@ jobs:
       packages: write
     if: github.event_name == 'workflow_dispatch' || github.event_name == 'create' && github.event.ref_type == 'tag'
     steps:
+      - uses: crazy-max/ghaction-dump-context@v2
       - uses: actions/checkout@v3
 
       - name: Login to GitHub Container Registry
@@ -117,6 +118,48 @@ jobs:
           target: output
 
       - run: find bin -type f -name 'provenance.json' -delete
+
+      - name: Re-tag latest
+        if: steps.metadata.outputs.use_latest == 'true'
+        uses: actions/github-script@v6
+        with:
+          # language=JavaScript
+          script: |
+            const tag = '${{ steps.metadata.outputs.target }}@latest'
+            core.debug(`searching existing release with tag ${tag}...`)
+            try {
+                const res = await github.rest.repos.getReleaseByTag({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    tag
+                })
+                core.debug(JSON.stringify(res))            
+            
+                core.info(`found existing release ID ${res.data.id}`)
+                await github.rest.repos.deleteRelease({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    release_id: res.data.id
+                })
+            } catch (e) {
+                core.debug(`not found existing release with tag ${tag}`)
+                if (e.status !== 404) {
+                    throw e
+                }
+            }
+            
+            core.info(`deleting tag: ${tag}`)
+            try {
+                await github.rest.git.deleteRef({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    ref: `tags/${tag}`
+                })
+            } catch (e) {
+                if (e.status !== 404) {
+                    throw e
+                }
+            }
 
       - name: Release
         uses: softprops/action-gh-release@v1
