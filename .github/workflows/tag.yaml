@@ -78,13 +78,19 @@ jobs:
                         if (e.status !== 404) {
                             throw e
                         }
-                    } finally {
+                    }
+            
+                    try {
                         core.debug(`not found existing release with tag ${tag}`)
                         await github.rest.git.deleteRef({
                             owner: context.repo.owner,
                             repo: context.repo.repo,
                             ref: `tags/${tag}`
                         })
+                    } catch (e) {
+                        if (e.status !== 422) {
+                            throw e
+                        }
                     }
                 }
             
