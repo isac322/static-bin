@@ -176,6 +176,7 @@ jobs:
         with:
           name: ${{ steps.metadata.outputs.target }}
           tag_name: '${{ steps.metadata.outputs.target }}@latest'
+          target_commitish: ${{ github.workflow_sha }}
           files: |
             bin/**/*
           generate_release_notes: true
