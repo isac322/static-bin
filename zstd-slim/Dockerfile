@@ -17,12 +17,10 @@ RUN wget -qO- "https://github.com/facebook/zstd/releases/download/v${VERSION}/zs
     && xx-apk add gcc musl-dev \
     && xx-clang --setup-target-triple \
     && CC="$(xx-info)-clang" \
-       CFLAGS='-Os -ffunction-sections -fdata-sections -DZSTD_LIB_DICTBUILDER=0 -DZSTD_LIB_DEPRECATED=0 -DZSTD_LIB_MINIFY=1 -DZSTD_LEGACY_SUPPORT=0' \
-       LDFLAGS='-Wl,--gc-sections -s' \
+       CFLAGS='-Os -Wl,--gc-sections -s -ffunction-sections -fdata-sections -DZSTD_LIB_DICTBUILDER=0 -DZSTD_LIB_DEPRECATED=0 -DZSTD_LIB_MINIFY=1 -DZSTD_LEGACY_SUPPORT=0' \
        make -j "$(nproc)" V=1 -C lib install-static-mt \
     && CC="$(xx-info)-clang" \
-       CFLAGS='-Os -ffunction-sections -fdata-sections -static -DZSTD_NOBENCH -DZSTD_NODICT -DZSTD_NOTRACE -DZSTD_LEGACY_SUPPORT=0' \
-       LDFLAGS='-Wl,--gc-sections -s -static' \
+       CFLAGS='-Os -Wl,--gc-sections -s -static -ffunction-sections -fdata-sections -DZSTD_NOBENCH -DZSTD_NODICT -DZSTD_NOTRACE -DZSTD_LEGACY_SUPPORT=0' \
        make -j$(nproc) V=1 -C programs install prefix=/opt/release \
          HAVE_THREAD=1 HAVE_ZLIB=0 HAVE_LZMA=0 HAVE_LZ4=0 BACKTRACE=0 \
     && xx-verify --static /opt/release/bin/zstd \
