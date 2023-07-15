@@ -31,7 +31,7 @@ For example [gnu-tar][2]:
 #### Option 1: Download binary directly
 
 ```bash
-wget -O gnu-tar "https://github.com/isac322/static-bin/releases/download/gnu-tar@latest/$(uname -m)"
+wget -O gnu-tar "https://github.com/isac322/static-bin/releases/download/gnu-tar/$(uname -m)"
 chmod +x gnu-tar
 gnu-tar --help
 ```
@@ -42,7 +42,7 @@ gnu-tar --help
 You can also use `cat /etc/apk/arch` instead of `uname -m`.
 
 ```bash
-wget -O gnu-tar "https://github.com/isac322/static-bin/releases/download/gnu-tar@latest/$(cat /etc/apk/arch)"
+wget -O gnu-tar "https://github.com/isac322/static-bin/releases/download/gnu-tar/$(cat /etc/apk/arch)"
 ```
 </details>
 

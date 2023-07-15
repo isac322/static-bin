@@ -12,7 +12,7 @@
 ## Download binary directly
 
 ```bash
-wget -O dash "https://github.com/isac322/static-bin/releases/download/dash@latest/$(uname -m)"
+wget -O dash "https://github.com/isac322/static-bin/releases/download/dash/$(uname -m)"
 chmod +x dash
 ```
 
