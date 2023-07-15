@@ -125,7 +125,7 @@ jobs:
         with:
           # language=JavaScript
           script: |
-            const tag = '${{ steps.metadata.outputs.target }}@latest'
+            const tag = '${{ steps.metadata.outputs.target }}'
             core.debug(`searching existing release with tag ${tag}...`)
             try {
                 const res = await github.rest.repos.getReleaseByTag({
@@ -175,7 +175,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           name: ${{ steps.metadata.outputs.target }}
-          tag_name: '${{ steps.metadata.outputs.target }}@latest'
+          tag_name: '${{ steps.metadata.outputs.target }}'
           target_commitish: ${{ github.workflow_sha }}
           files: |
             bin/**/*
