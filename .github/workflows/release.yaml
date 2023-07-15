@@ -156,7 +156,7 @@ jobs:
                     ref: `tags/${tag}`
                 })
             } catch (e) {
-                if (e.status !== 404) {
+                if (e.status !== 422) {
                     throw e
                 }
             }
