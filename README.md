@@ -1,6 +1,9 @@
 [1]: https://github.com/isac322/static-bin/tree/HEAD/dash
 [2]: https://github.com/isac322/static-bin/tree/HEAD/gnu-tar
 [3]: https://github.com/isac322/static-bin/tree/HEAD/zstd-slim
+[4]: https://github.com/isac322/static-bin/tree/HEAD/zstd-full
+[5]: https://github.com/isac322/static-bin/tree/HEAD/curl-slim
+[6]: https://github.com/isac322/static-bin/tree/HEAD/curl-full
 
 # Statically built executables
 
@@ -22,7 +25,8 @@ You can be freed from worrying about program installation inside CI or Docker im
 
 - [dash][1]
 - [gnu-tar][2]
-- [zstd][3]
+- [zstd][4] ([slim][3])
+- [curl][6] ([slim][5])
 
 ## Usage
 
