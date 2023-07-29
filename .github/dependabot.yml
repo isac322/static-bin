@@ -10,11 +10,19 @@ updates:
     schedule:
       interval: "daily"
   - package-ecosystem: "docker"
+    directory: "/curl-slim" # Location of package manifests
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "docker"
     directory: "/dash" # Location of package manifests
     schedule:
       interval: "daily"
   - package-ecosystem: "docker"
     directory: "/gnu-tar" # Location of package manifests
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "docker"
+    directory: "/zstd-full" # Location of package manifests
     schedule:
       interval: "daily"
   - package-ecosystem: "docker"
