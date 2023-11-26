@@ -84,13 +84,13 @@ jobs:
             VERSION=${{ steps.metadata.outputs.version }}
 
   build-result:
-    if: always()
+    if: always() && needs.collect-images.outputs.image_changed == 'true'
     needs:
       - collect-images
       - build
       - lint
     runs-on: ubuntu-latest
     steps:
-      - if: needs.collect-images.outputs.image_changed != 'true' && needs.build.result != 'success' && needs.build.result != 'skipped'
+      - if: needs.build.result != 'success' && needs.build.result != 'skipped'
         # language=Bash
         run: echo '${{ needs.build.result }}' && exit 1
