@@ -16,8 +16,8 @@
 Output of `docker run --rm -ti ghcr.io/isac322/curl:slim --version`:
 
 ```
-curl 8.3.0 (x86_64-alpine-linux-musl) libcurl/8.3.0
-Release-Date: 2023-09-13
+curl 8.4.0 (x86_64-alpine-linux-musl) libcurl/8.4.0
+Release-Date: 2023-10-11
 Protocols: http
 Features: alt-svc IPv6 Largefile threadsafe UnixSockets
 ```
@@ -62,12 +62,12 @@ configure: Configured to build curl/libcurl:
 Host setup:       x86_64-alpine-linux-musl
 Install prefix:   /usr/local
 Compiler:         xx-clang
- CFLAGS:          -ffunction-sections -flto=thin -fdata-sections -Qunused-arguments -O2 -Wno-pointer-bool-conversion
+ CFLAGS:          -Oz -ffunction-sections -fdata-sections -fno-unwind-tables -fno-asynchronous-unwind-tables -flto=thin -Qunused-arguments -O2 -Wno-pointer-bool-conversion
  CPPFLAGS:        
- LDFLAGS:         -Wl,--gc-sections -s -flto=thin --static
+ LDFLAGS:         -Wl,-O2 -Wl,-s -Wl,-Bsymbolic -Wl,--gc-sections --static
  LIBS:            
 
-curl version:     8.3.0
+curl version:     8.4.0
 SSL:              no      (--with-{openssl,gnutls,mbedtls,wolfssl,schannel,secure-transport,amissl,bearssl,rustls} )
 SSH:              no      (--with-{libssh,libssh2})
 zlib:             no      (--with-zlib)
