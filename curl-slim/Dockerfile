@@ -15,11 +15,12 @@ WORKDIR /opt/curl
 RUN wget -O- https://curl.se/download/curl-${VERSION}.tar.xz | tar -Jxf - -C /opt/curl --strip-components=1 \
     && apk add --update autoconf automake libtool make clang llvm lld upx \
     && if [ "${TARGETARCH}" = 'ppc64le' ]; then export XX_CC_PREFER_LINKER=ld; fi \
+    && if [ "${TARGETARCH}" != 'riscv64' ]; then CFLAGS_LTO='-flto=thin'; fi \
     && xx-apk add gcc musl-dev \
     && xx-clang --setup-target-triple \
     && autoreconf -fi \
-    && CFLAGS='-Os -ffunction-sections -flto=thin -fdata-sections' \
-       LDFLAGS='-Wl,--gc-sections -s -flto=thin --static' \
+    && CFLAGS="-Os -ffunction-sections ${CFLAGS_LTO} -fdata-sections" \
+       LDFLAGS="-Wl,--gc-sections -s ${CFLAGS_LTO} --static" \
        CC=xx-clang \
           ./configure \
           --host=$(xx-clang --print-target-triple) \
