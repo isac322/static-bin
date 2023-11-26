@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.5
 
-FROM --platform=$BUILDPLATFORM tonistiigi/xx AS xx
-FROM --platform=$BUILDPLATFORM alpine as builder
+FROM --platform=$BUILDPLATFORM tonistiigi/xx:1.3.0 AS xx
+FROM --platform=$BUILDPLATFORM alpine:3.18 as builder
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 # copy xx scripts to your build stage
 COPY --from=xx / /
@@ -13,16 +13,16 @@ ARG VERSION
 WORKDIR /opt/curl
 
 RUN wget -O- https://curl.se/download/curl-${VERSION}.tar.xz | tar -Jxf - -C /opt/curl --strip-components=1 \
-    && apk add --update autoconf automake libtool make clang llvm lld upx \
-    && if [ "${TARGETARCH}" = 'ppc64le' ]; then export XX_CC_PREFER_LINKER=ld; fi \
+    && apk add --update autoconf automake libtool make clang llvm lld \
     && xx-apk add gcc musl-dev \
+    && if [ "${TARGETARCH}" = 'ppc64le' ]; then export XX_CC_PREFER_LINKER=ld; fi \
     && xx-clang --setup-target-triple \
     && if echo 'int main() { return 0; }' | xx-clang -flto=thin -x c - 2>&1 /dev/null; then \
       CFLAGS_LTO='-flto=thin'; \
     fi \
     && autoreconf -fi \
-    && CFLAGS="-Oz -ffunction-sections ${CFLAGS_LTO} -fdata-sections" \
-       LDFLAGS="-Wl,-O2 -Wl,--gc-sections -s --static" \
+    && CFLAGS="-Oz -ffunction-sections -fdata-sections -fno-unwind-tables -fno-asynchronous-unwind-tables ${CFLAGS_LTO}" \
+       LDFLAGS="-Wl,-O2 -Wl,-s -Wl,-Bsymbolic -Wl,--gc-sections --static" \
        CC=xx-clang \
           ./configure \
           --host=$(xx-clang --print-target-triple) \

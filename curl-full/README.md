@@ -16,10 +16,10 @@
 `docker run --rm -ti ghcr.io/isac322/curl:latest --version`
 
 ```
-curl 8.2.1 (aarch64-alpine-linux-musl) libcurl/8.2.1 OpenSSL/3.1.4 zlib/1.2.13 brotli/1.1.0 zstd/1.5.5 c-ares/1.19.1 libssh2/1.10.0 nghttp2/1.57.0
-Release-Date: 2023-07-26
+curl 8.4.0 (x86_64-alpine-linux-musl) libcurl/8.4.0 OpenSSL/3.1.4 zlib/1.2.13 brotli/1.1.0 zstd/1.5.5 c-ares/1.19.1 libssh2/1.10.0 nghttp2/1.57.0
+Release-Date: 2023-10-11
 Protocols: dict file ftp ftps gopher gophers http https imap imaps mqtt pop3 pop3s rtsp scp sftp smb smbs smtp smtps telnet tftp ws wss
-Features: alt-svc AsynchDNS brotli HSTS HTTP2 HTTPS-proxy IPv6 Largefile libz NTLM NTLM_WB SSL threadsafe TLS-SRP UnixSockets zstd
+Features: alt-svc AsynchDNS brotli HSTS HTTP2 HTTPS-proxy IPv6 Largefile libz NTLM SSL threadsafe TLS-SRP UnixSockets zstd
 ```
 
 ## Download binary directly
@@ -59,15 +59,15 @@ chmod +x curl-full
 configure: Configured to build curl/libcurl:
 
 ```
-Host setup:       aarch64-alpine-linux-musl
+Host setup:       x86_64-alpine-linux-musl
 Install prefix:   /usr/local
 Compiler:         xx-clang
  CFLAGS:          -Oz -ffunction-sections -fdata-sections -fno-unwind-tables -fno-asynchronous-unwind-tables -flto=thin -Qunused-arguments -O2 -Wno-pointer-bool-conversion
- CPPFLAGS:        -isystem /aarch64-alpine-linux-musl/usr/include -isystem /aarch64-alpine-linux-musl/usr/include -isystem /aarch64-alpine-linux-musl/usr/include -isystem /aarch64-alpine-linux-musl/usr/include -isystem /aarch64-alpine-linux-musl/usr/include -isystem /aarch64-alpine-linux-musl/usr/include -isystem /aarch64-alpine-linux-musl/usr/include -isystem /aarch64-alpine-linux-musl/usr/include
- LDFLAGS:         -Wl,-O2 -Wl,-s -Wl,-Bsymbolic -Wl,--gc-sections -lbrotlicommon --static -v -L/aarch64-alpine-linux-musl/lib -L/aarch64-alpine-linux-musl/usr/lib -L/aarch64-alpine-linux-musl/usr/lib -L/aarch64-alpine-linux-musl/usr/lib -L/aarch64-alpine-linux-musl/usr/lib -L/aarch64-alpine-linux-musl/usr/lib -L/aarch64-alpine-linux-musl/usr/lib -L/aarch64-alpine-linux-musl/usr/lib
- LIBS:            -lcares -lnghttp3 -lnghttp2 -lssh2 -L/aarch64-alpine-linux-musl/usr/lib -lssh2 -lssl -lcrypto -lssl -lcrypto -lzstd -lzstd -lbrotlidec -lbrotlidec -lz
+ CPPFLAGS:        
+ LDFLAGS:         -Wl,-O2 -Wl,-s -Wl,-Bsymbolic -Wl,--gc-sections -lbrotlicommon --static -L/lib
+ LIBS:            -lcares -lnghttp3 -lnghttp2 -lssh2 -lssh2 -lssl -lcrypto -lssl -lcrypto -lzstd -lzstd -lbrotlidec -lbrotlidec -lz
 
-curl version:     8.2.1
+curl version:     8.4.0
 SSL:              enabled (OpenSSL v3+)
 SSH:              enabled (libSSH2)
 zlib:             enabled
@@ -87,7 +87,7 @@ Verbose errors:   enabled (--disable-verbose)
 Code coverage:    disabled
 SSPI:             no      (--enable-sspi)
 ca cert bundle:   /etc/ssl/certs/ca-certificates.crt
-ca cert path:     no
+ca cert path:     /etc/ssl/certs
 ca fallback:      no
 LDAP:             no      (--enable-ldap / --with-ldap-lib / --with-lber-lib)
 LDAPS:            no      (--enable-ldaps)
@@ -103,7 +103,7 @@ HTTP3:            enabled (ngtcp2 + nghttp3)
 ECH:              no      (--enable-ech)
 WebSockets:       enabled
 Protocols:        DICT FILE FTP FTPS GOPHER GOPHERS HTTP HTTPS IMAP IMAPS MQTT POP3 POP3S RTSP SCP SFTP SMB SMBS SMTP SMTPS TELNET TFTP WS WSS
-Features:         AsynchDNS HSTS HTTP2 HTTPS-proxy IPv6 Largefile NTLM NTLM_WB SSL TLS-SRP UnixSockets alt-svc brotli libz threadsafe zstd
+Features:         AsynchDNS HSTS HTTP2 HTTPS-proxy IPv6 Largefile NTLM SSL TLS-SRP UnixSockets alt-svc brotli libz threadsafe zstd
 
 WARNING:  HTTP3 Websockets enabled but marked EXPERIMENTAL. Use with caution!
 ```
