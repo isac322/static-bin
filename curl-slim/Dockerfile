@@ -15,8 +15,8 @@ WORKDIR /opt/curl
 RUN wget -O- https://curl.se/download/curl-${VERSION}.tar.xz | tar -Jxf - -C /opt/curl --strip-components=1 \
     && apk add --update autoconf automake libtool make clang llvm lld \
     && xx-apk add gcc musl-dev \
-    && xx-clang --setup-target-triple \
     && if [ "${TARGETARCH}" = 'ppc64le' ]; then export XX_CC_PREFER_LINKER=ld; fi \
+    && xx-clang --setup-target-triple \
     && if echo 'int main() { return 0; }' | xx-clang -flto=thin -x c - 2>&1 /dev/null; then \
       CFLAGS_LTO='-flto=thin'; \
     fi \
