@@ -68,7 +68,7 @@ jobs:
 
       - name: Set up QEMU
         if: steps.metadata.outputs.qemu == 'true'
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v3
         with:
           platforms: ${{ steps.metadata.outputs.platforms }}
 
