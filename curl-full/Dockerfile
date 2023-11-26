@@ -44,7 +44,7 @@ RUN wget -O- https://curl.se/download/curl-${VERSION}.tar.xz | tar -Jxf - --stri
     && cmake --build /opt/brotli/out --parallel "$(nproc)" --target install \
     && autoreconf -fi \
     && CFLAGS="-Oz -ffunction-sections -fdata-sections -fno-unwind-tables -fno-asynchronous-unwind-tables ${CFLAGS_LTO}" \
-       LDFLAGS="-Wl,-O2 -Wl,-s -Wl,-Bsymbolic -Wl,--gc-sections -lbrotlicommon --static -v" \
+       LDFLAGS="-Wl,-O2 -Wl,-s -Wl,-Bsymbolic -Wl,--gc-sections -lbrotlicommon --static" \
        CC=xx-clang \
           ./configure \
           --host=$(xx-clang --print-target-triple) \
