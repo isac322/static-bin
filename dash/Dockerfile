@@ -1,8 +1,8 @@
 # syntax=docker/dockerfile:1.5
 
-FROM tonistiigi/xx AS xx
-FROM alpine:edge as builder
-SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
+FROM tonistiigi/xx:1.3.0 AS xx
+FROM alpine:3.19 as builder
+SHELL ["/bin/ash", "-eo", "pipefail", "-exc"]
 # copy xx scripts to your build stage
 COPY --from=xx / /
 # export TARGETPLATFORM (or other TARGET*)
