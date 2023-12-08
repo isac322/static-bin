@@ -2,7 +2,7 @@
 
 FROM --platform=$BUILDPLATFORM tonistiigi/xx:1.3.0 AS xx
 FROM --platform=$BUILDPLATFORM alpine:3.19 as builder
-SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
+SHELL ["/bin/ash", "-eo", "pipefail", "-exc"]
 # copy xx scripts to your build stage
 COPY --from=xx / /
 # export TARGETPLATFORM (or other TARGET*)
@@ -12,7 +12,7 @@ ARG TARGETARCH
 ARG VERSION
 WORKDIR /opt/curl
 
-RUN wget -O- https://curl.se/download/curl-${VERSION}.tar.xz | tar -Jxf - -C /opt/curl --strip-components=1 \
+RUN wget -qO - https://curl.se/download/curl-${VERSION}.tar.xz | tar -Jxf - --strip-components=1 \
     && apk add --update autoconf automake libtool make clang llvm lld \
     && xx-apk add gcc musl-dev \
     && if [ "${TARGETARCH}" = 'ppc64le' ]; then export XX_CC_PREFER_LINKER=ld; fi \
