@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.5
 
 FROM --platform=$BUILDPLATFORM tonistiigi/xx:1.3.0 AS xx
-FROM --platform=$BUILDPLATFORM alpine:3.18 as builder
+FROM --platform=$BUILDPLATFORM alpine:3.19 as builder
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 # copy xx scripts to your build stage
 COPY --from=xx / /
