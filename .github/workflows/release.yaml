@@ -163,7 +163,7 @@ jobs:
             }
 
       - name: Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: '${{ steps.metadata.outputs.target }}@${{ steps.metadata.outputs.version }}'
           files: |
@@ -173,7 +173,7 @@ jobs:
 
       - name: Release latest
         if: (github.event_name == 'workflow_dispatch' && github.event.inputs.latest == 'true') || github.event_name == 'create'
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           name: ${{ steps.metadata.outputs.target }}
           tag_name: '${{ steps.metadata.outputs.target }}'
