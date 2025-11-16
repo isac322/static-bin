@@ -40,6 +40,7 @@ RUN wget -qO - https://curl.se/download/curl-${VERSION}.tar.xz | tar -Jxf - --st
           --disable-libcurl-option \
           --without-ca-bundle \
           --disable-rtsp \
+          --without-libpsl \
           --disable-dict \
           --disable-file \
           --disable-ftp \

@@ -21,7 +21,7 @@ RUN wget -qO - https://curl.se/download/curl-${VERSION}.tar.xz | tar -Jxf - --st
       libssh2-dev libssh2-static \
       zstd-dev zstd-static \
       nghttp2-dev nghttp2-static \
-      nghttp3-dev \
+      nghttp3-dev nghttp3-static \
       libidn2-dev libidn2-static \
       libpsl-dev libpsl-static \
     && if [ "${TARGETARCH}" = 'ppc64le' ]; then export XX_CC_PREFER_LINKER=ld; fi \
@@ -63,10 +63,12 @@ RUN wget -qO - https://curl.se/download/curl-${VERSION}.tar.xz | tar -Jxf - --st
           --enable-manual \
           --disable-threaded-resolver \
           --with-nghttp2 \
-          --with-ngtcp2 --with-nghttp3 \
+          --with-nghttp3 \
           --enable-websockets \
           --with-openssl \
+          --with-openssl-quic \
           --with-pic \
+          --without-libpsl \
     && make -j "$(nproc)" \
     && xx-verify --static src/curl \
     && $(xx-info triple)-strip -s -R .comment -R .gnu.version --strip-unneeded src/curl \
