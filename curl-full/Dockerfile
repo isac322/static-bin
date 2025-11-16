@@ -23,7 +23,6 @@ RUN wget -qO - https://curl.se/download/curl-${VERSION}.tar.xz | tar -Jxf - --st
       nghttp2-dev nghttp2-static \
       nghttp3-dev nghttp3-static \
       libidn2-dev libidn2-static \
-      libpsl-dev libpsl-static \
     && if [ "${TARGETARCH}" = 'ppc64le' ]; then export XX_CC_PREFER_LINKER=ld; fi \
     && xx-clang --setup-target-triple \
     && if echo 'int main() { return 0; }' | xx-clang -flto=thin -x c - 2>&1 /dev/null; then \
