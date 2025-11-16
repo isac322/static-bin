@@ -1,7 +1,7 @@
-# syntax=docker/dockerfile:1.5
+# syntax=docker/dockerfile:1.19
 
-FROM --platform=$BUILDPLATFORM tonistiigi/xx:1.4.0 AS xx
-FROM --platform=$BUILDPLATFORM alpine:3.19 as builder
+FROM --platform=$BUILDPLATFORM tonistiigi/xx:1.8.0 AS xx
+FROM --platform=$BUILDPLATFORM alpine:3.22 AS builder
 SHELL ["/bin/ash", "-eo", "pipefail", "-exc"]
 # copy xx scripts to your build stage
 COPY --from=xx / /
@@ -60,7 +60,7 @@ RUN wget -qO - https://curl.se/download/curl-${VERSION}.tar.xz | tar -Jxf - --st
     && mkdir -p /release \
     && echo "/release/$(xx-info march) /release/$(xx-info debian-arch)" | xargs -n 1 cp -vfp src/curl
 
-FROM scratch as output
+FROM scratch AS output
 COPY --link --from=builder /release/ .
 
 FROM scratch
