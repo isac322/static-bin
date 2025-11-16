@@ -15,7 +15,7 @@ WORKDIR /opt/curl
 RUN wget -qO - https://curl.se/download/curl-${VERSION}.tar.xz | tar -Jxf - --strip-components=1 \
     && apk add --update cmake autoconf automake libtool make clang llvm lld pkgconfig groff \
     && xx-apk add gcc musl-dev \
-      c-ares-dev c-ares-static \
+      c-ares-dev \
       openssl-dev openssl-libs-static \
       zlib-static zlib-dev \
       libssh2-dev libssh2-static \
