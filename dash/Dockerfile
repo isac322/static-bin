@@ -1,7 +1,7 @@
-# syntax=docker/dockerfile:1.5
+# syntax=docker/dockerfile:1.19
 
-FROM tonistiigi/xx:1.3.0 AS xx
-FROM alpine:edge as builder
+FROM --platform=$BUILDPLATFORM tonistiigi/xx:1.8.0 AS xx
+FROM --platform=$BUILDPLATFORM alpine:3.22 AS builder
 SHELL ["/bin/ash", "-eo", "pipefail", "-exc"]
 # copy xx scripts to your build stage
 COPY --from=xx / /
@@ -27,7 +27,7 @@ RUN wget -qO - "https://git.kernel.org/pub/scm/utils/dash/dash.git/snapshot/dash
     && mkdir -p /release \
     && echo "/release/$(xx-info march) /release/$(xx-info debian-arch)" | xargs -n 1 cp -vfp src/dash
 
-FROM scratch as output
+FROM scratch AS output
 COPY --link --from=builder /release/ .
 
 FROM scratch
