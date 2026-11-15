@@ -36,11 +36,19 @@ jobs:
           dir_names_max_depth: 1
           json: true
           escape_json: false
+      - name: Create release app token
+        if: github.event_name == 'workflow_dispatch' || steps.changed-files.outputs.any_changed == 'true'
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.RELEASE_APP_CLIENT_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+          permission-contents: write
       - name: Create tag
         if: github.event_name == 'workflow_dispatch' || steps.changed-files.outputs.any_changed == 'true'
         uses: actions/github-script@v8
         with:
-          github-token: ${{ secrets.GHA_PAT }}
+          github-token: ${{ steps.app-token.outputs.token }}
           # language=JavaScript
           script: |
             const fs = require('fs/promises')
